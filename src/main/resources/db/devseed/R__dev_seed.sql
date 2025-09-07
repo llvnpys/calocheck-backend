@@ -1,3 +1,14 @@
+-- 매장
+WITH bid AS (SELECT id AS brand_id FROM brand WHERE name='매머드커피')
+INSERT INTO store (brand_id, name, lat, lon, address)
+SELECT brand_id, '매머드커피 선릉점', 37.5040, 127.0480, '서울 강남구 테헤란로' FROM bid
+    ON CONFLICT (brand_id, name) DO NOTHING;
+
+WITH bid AS (SELECT id AS brand_id FROM brand WHERE name='매머드커피')
+INSERT INTO store (brand_id, name, lat, lon, address)
+SELECT brand_id, '매머드커피 역삼점', 37.4980, 127.0350, '서울 강남구 역삼동' FROM bid
+    ON CONFLICT (brand_id, name) DO NOTHING;
+
 -- 브랜드
 WITH b AS (
 INSERT INTO brand (name, category)
