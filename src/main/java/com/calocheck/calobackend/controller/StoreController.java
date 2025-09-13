@@ -1,13 +1,9 @@
 package com.calocheck.calobackend.controller;
 
-import com.calocheck.calobackend.domain.Brand;
-import com.calocheck.calobackend.domain.Store;
 import com.calocheck.calobackend.dto.StorePinDto;
-import com.calocheck.calobackend.service.BrandService;
 import com.calocheck.calobackend.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +28,4 @@ public class StoreController {
                 ))
                 .toList();
     }
-
-
 }
