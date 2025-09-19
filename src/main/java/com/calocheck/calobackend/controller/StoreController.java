@@ -1,11 +1,10 @@
 package com.calocheck.calobackend.controller;
 
+import com.calocheck.calobackend.dto.StoreFilterRequestDto;
 import com.calocheck.calobackend.dto.StorePinDto;
 import com.calocheck.calobackend.service.StoreService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,15 +16,12 @@ public class StoreController {
 
     @GetMapping
     public List<StorePinDto> getAllStores() {
-        return storeService.findAll().stream()
-                .map(s -> new StorePinDto(
-                        s.getId(),
-                        s.getBrand().getId(),
-                        s.getName(),
-                        s.getLat(),
-                        s.getLon(),
-                        s.getAddress()
-                ))
-                .toList();
+        return storeService.findAll();
     }
+
+    @PostMapping("/filtered")
+    public List<StorePinDto> getFilteredStores(@RequestBody StoreFilterRequestDto requestDto) {
+        return storeService.findStoreByFilters(requestDto);
+    }
+
 }

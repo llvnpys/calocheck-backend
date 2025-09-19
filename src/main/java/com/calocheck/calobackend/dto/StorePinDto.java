@@ -6,7 +6,9 @@ public record StorePinDto(
         UUID id,
         UUID brandId,
         String name,
+        String brandCategory,
         double lat,
         double lon,
         String address
-) {}
+) {
+}
