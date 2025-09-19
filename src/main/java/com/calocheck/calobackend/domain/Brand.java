@@ -25,7 +25,7 @@ public class Brand {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(nullable = false)      // 'cafe','restaurant','bakery','etc'
+    @Column(nullable = false)      // 'cafe','restaurant','etc'
     private String category;
 
     @Column(name = "image_url")

@@ -41,7 +41,8 @@ src/main/resources/application-*.yml
 
 ### Docker ###
 .dockerignore
-Dockerfile
 
 logs/
 *.log
+
+.env
