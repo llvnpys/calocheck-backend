@@ -1,11 +1,11 @@
 -- 0) UUID 함수
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- 1) 테이블
+-- 1) 테이블 정의
 CREATE TABLE IF NOT EXISTS brand (
                                      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name       VARCHAR(255) NOT NULL,
-    category   TEXT NOT NULL CHECK (category IN ('cafe','restaurant', 'etc')),
+    category   TEXT NOT NULL CHECK (category IN ('cafe','restaurant','etc')),
     image_url  TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP
@@ -46,12 +46,22 @@ CREATE TABLE IF NOT EXISTS store (
     updated_at TIMESTAMP
     );
 
--- 2) 고유 제약 (UNIQUE CONSTRAINT) — 비즈니스 규칙
-ALTER TABLE brand     ADD CONSTRAINT IF NOT EXISTS uq_brand_name            UNIQUE (name);
-ALTER TABLE menu      ADD CONSTRAINT IF NOT EXISTS uq_menu_brand_name       UNIQUE (brand_id, name);
-ALTER TABLE store     ADD CONSTRAINT IF NOT EXISTS uq_store_brand_name      UNIQUE (brand_id, name);
-ALTER TABLE nutrition ADD CONSTRAINT IF NOT EXISTS uq_nutrition_menu_size   UNIQUE (menu_id, size);
+-- 2) 고유(UNIQUE) 제약은 고유 인덱스로 안전하게 처리
+CREATE UNIQUE INDEX IF NOT EXISTS ux_brand_name
+    ON brand(name);
 
--- 3) 조회용 일반 인덱스
-CREATE INDEX IF NOT EXISTS ix_menu_name        ON menu(name);
-CREATE INDEX IF NOT EXISTS ix_nutrition_menu   ON nutrition(menu_id);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_menu_brand_name
+    ON menu(brand_id, name);
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_store_brand_name
+    ON store(brand_id, name);
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_nutrition_menu_size
+    ON nutrition(menu_id, size);
+
+-- 3) 조회용 인덱스
+CREATE INDEX IF NOT EXISTS ix_menu_name
+    ON menu(name);
+
+CREATE INDEX IF NOT EXISTS ix_nutrition_menu
+    ON nutrition(menu_id);
