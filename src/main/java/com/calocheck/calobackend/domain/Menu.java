@@ -28,8 +28,6 @@ public class Menu {
     @Column(nullable = false, length = 255)
     private String name;
 
-    private Integer price;
-
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 

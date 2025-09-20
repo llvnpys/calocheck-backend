@@ -29,6 +29,8 @@ public class Nutrition {
     @Column(nullable = false)
     private String size;
 
+    private Integer price;
+
     @Column(nullable = false)
     private Integer calories;
 
