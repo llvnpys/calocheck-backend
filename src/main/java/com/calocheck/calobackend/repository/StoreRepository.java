@@ -1,6 +1,7 @@
 package com.calocheck.calobackend.repository;
 
 import com.calocheck.calobackend.domain.Store;
+import com.calocheck.calobackend.dto.StoreFilterDto;
 import com.calocheck.calobackend.dto.StorePinDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,26 +23,22 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
                       :hasMacro = false or exists (
                         select 1 from Menu m join Nutrition n on n.menu = m
                         where m.brand = s.brand
-                          and (:calMin is null or n.calories >= :calMin)
-                          and (:calMax is null or n.calories <= :calMax)
-                          and (:proMin is null or n.protein  >= :proMin)
-                          and (:proMax is null or n.protein  <= :proMax)
-                          and (:fatMin is null or n.fat      >= :fatMin)
-                          and (:fatMax is null or n.fat      <= :fatMax)
-                          and (:carbMin is null or n.carbohydrate >= :carbMin)
-                          and (:carbMax is null or n.carbohydrate <= :carbMax)
+                            and (:#{#f.caloriesMin}  is null or n.calories     >= :#{#f.caloriesMin})
+                            and (:#{#f.caloriesMax}  is null or n.calories     <= :#{#f.caloriesMax})
+                            and (:#{#f.proteinMin}   is null or n.protein      >= :#{#f.proteinMin})
+                            and (:#{#f.proteinMax}   is null or n.protein      <= :#{#f.proteinMax})
+                            and (:#{#f.fatMin}       is null or n.fat          >= :#{#f.fatMin})
+                            and (:#{#f.fatMax}       is null or n.fat          <= :#{#f.fatMax})
+                            and (:#{#f.carbMin}      is null or n.carbohydrate >= :#{#f.carbMin})
+                            and (:#{#f.carbMax}      is null or n.carbohydrate <= :#{#f.carbMax})
                       )
                     )
             """)
-    List<StorePinDto> findStoreByFilters(
+    List<StorePinDto> findStoresByFilter(
             @Param("categories") List<String> categories,
-
             @Param("minLat") Double minLat, @Param("maxLat") Double maxLat,
             @Param("minLon") Double minLon, @Param("maxLon") Double maxLon,
             @Param("hasMacro") Boolean hasMacro,
-            @Param("calMin")  Double calMin,  @Param("calMax")  Double calMax,
-            @Param("proMin")  Double proMin,  @Param("proMax")  Double proMax,
-            @Param("fatMin")  Double fatMin,  @Param("fatMax")  Double fatMax,
-            @Param("carbMin") Double carbMin, @Param("carbMax") Double carbMax
+            @Param("f") StoreFilterDto filter
     );
 }

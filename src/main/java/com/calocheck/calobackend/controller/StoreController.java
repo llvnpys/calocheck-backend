@@ -1,6 +1,6 @@
 package com.calocheck.calobackend.controller;
 
-import com.calocheck.calobackend.dto.StoreFilterRequestDto;
+import com.calocheck.calobackend.dto.StoreFilterDto;
 import com.calocheck.calobackend.dto.StorePinDto;
 import com.calocheck.calobackend.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class StoreController {
     }
 
     @PostMapping("/filtered")
-    public List<StorePinDto> getFilteredStores(@RequestBody StoreFilterRequestDto requestDto) {
-        return storeService.findStoreByFilters(requestDto);
+    public List<StorePinDto> findStoresByFilter(@RequestBody StoreFilterDto filter) {
+        return storeService.findStoresByFilter(filter);
     }
 
 }

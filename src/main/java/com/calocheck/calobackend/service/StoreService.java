@@ -1,6 +1,6 @@
 package com.calocheck.calobackend.service;
 
-import com.calocheck.calobackend.dto.StoreFilterRequestDto;
+import com.calocheck.calobackend.dto.StoreFilterDto;
 import com.calocheck.calobackend.dto.StorePinDto;
 import com.calocheck.calobackend.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,18 +14,18 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class StoreService {
     private final StoreRepository storeRepository;
+
     // 기본 위치 : 선릉역
     private static final double DEFAULT_LAT = 37.504;
     private static final double DEFAULT_LON = 127.048;
     // 고정 반경(km) → bbox
     private static final double HALF_SIDE_KM = 1.0;
 
-    public List<StorePinDto> findStoreByFilters(StoreFilterRequestDto req) {
-        double lat = req.centerLat() != null ? req.centerLat() : DEFAULT_LAT;
-        double lon = req.centerLon() != null ? req.centerLon() : DEFAULT_LON;
+    public List<StorePinDto> findStoresByFilter(StoreFilterDto filter) {
+        double lat = filter.centerLat() != null ? filter.centerLat() : DEFAULT_LAT;
+        double lon = filter.centerLon() != null ? filter.centerLon() : DEFAULT_LON;
 
-        // km → degree 근사치 (위도/경도 변환)
-        // 위도 1° ≈ 110.574km, 경도 1° ≈ 111.320 * cos(lat) km
+        // km → degree 근사치
         double latDegPerKm = 1.0 / 110.574;
         double lonDegPerKm = 1.0 / (111.320 * Math.cos(Math.toRadians(lat)));
 
@@ -37,29 +37,25 @@ public class StoreService {
         double minLon = lon - dLon;
         double maxLon = lon + dLon;
 
-        // 카테고리가 아예 없으면 아무 매장도 반환하지 않음
-        if (req.categories() == null ||  req.categories().isEmpty()) {
+        // 카테고리 없으면 빈 리스트
+        if (filter.categories() == null || filter.categories().isEmpty()) {
             return List.of();
         }
 
-        // Determine if any macro filter is present
+        // 매크로(영양) 조건이 하나라도 있으면 true
         boolean hasMacro =
-                req.proteinMin() != null || req.proteinMax() != null ||
-                req.fatMin() != null || req.fatMax() != null ||
-                req.carbMin() != null || req.carbMax() != null ||
-                req.caloriesMin() != null || req.caloriesMax() != null;
+                filter.proteinMin()  != null || filter.proteinMax()  != null ||
+                        filter.fatMin()      != null || filter.fatMax()      != null ||
+                        filter.carbMin()     != null || filter.carbMax()     != null ||
+                        filter.caloriesMin() != null || filter.caloriesMax() != null;
 
-        return storeRepository.findStoreByFilters(
-                req.categories(),
+        return storeRepository.findStoresByFilter(
+                filter.categories(),
                 minLat, maxLat, minLon, maxLon,
                 hasMacro,
-                req.caloriesMin(), req.caloriesMax(),
-                req.proteinMin(),  req.proteinMax(),
-                req.fatMin(),      req.fatMax(),
-                req.carbMin(),     req.carbMax()
+                filter
         );
     }
-
 
     public List<StorePinDto> findAll() {
         return storeRepository.findAll()
